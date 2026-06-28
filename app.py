@@ -1,6 +1,7 @@
 import streamlit as st
 from rag.ingestor import extract_text_from_pdf
-
+from rag.cleaner import clean_text
+from rag.cleaner import clean_document
 
 st.set_page_config(page_title="PDF Text Extractor", page_icon="📄", layout="wide")
 st.title("⚖️ Indian Legal Document Assistant")
@@ -18,8 +19,15 @@ if pdf_file is not None:
         #Read Uploaded PDF as bytes
         pdf_bytes = pdf_file.read()
 
+        cleaned_pages = []
+
         # Extract text using the ingestor module
         result = extract_text_from_pdf(pdf_bytes)
+
+        # for page in result["pages"]:
+        #     print(repr(page["text"][:500]))
+
+        result = clean_document(result)
 
         pages = result["pages"]
         full_text = result["full_text"]
