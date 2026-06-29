@@ -7,6 +7,41 @@ def clean_text(text):
     text = text.replace("\u00A0", " ")
     text = text.replace("\x0c", "")
 
+
+     # Remove page markers
+    text = re.sub(r"---\s*Page\s*\d+\s*---", "", text)
+
+    # Remove page numbers alone on a line
+    text = re.sub(r"^\d+\s*$", "", text, flags=re.MULTILINE)
+
+    # Remove journal header
+    text = re.sub(
+        r"International Journal of Law Management & Humanities",
+        "",
+        text
+    )
+
+    # Remove volume information
+    text = re.sub(
+        r"\[Vol\..*?\]",
+        "",
+        text
+    )
+
+    # Remove copyright line
+    text = re.sub(
+        r"©\s*\d{4}\..*",
+        "",
+        text
+    )
+
+    # Remove ISSN line
+    text = re.sub(
+        r"\[ISSN.*?\]",
+        "",
+        text
+    )
+    
     # Remove trailing spaces from each line
     text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
 
