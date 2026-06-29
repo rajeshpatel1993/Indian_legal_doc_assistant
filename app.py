@@ -2,6 +2,7 @@ import streamlit as st
 from rag.ingestor import extract_text_from_pdf
 from rag.cleaner import clean_text
 from rag.cleaner import clean_document
+from rag.chunker import create_chunks, get_text_chunks
 
 st.set_page_config(page_title="PDF Text Extractor", page_icon="📄", layout="wide")
 st.title("⚖️ Indian Legal Document Assistant")
@@ -36,6 +37,22 @@ if pdf_file is not None:
         # Success Message
         st.success(f"Successfully uploaded: {pdf_file.name}")
         st.info(f"Total Pages: {page_count}")
+
+        final_chunks = create_chunks(full_text)
+        st.write(f"Total Chunks Created: {len(final_chunks)}")
+        st.write("### Chunks Overview")
+        for idx, chunk in enumerate(final_chunks):
+            st.write(f"**Chunk {idx + 1}:**")
+            st.write(f"- Main Topic: {chunk['main_topic']}")
+            st.write(f"- Sub Topic: {chunk['sub_topic']}")
+            st.write(f"- Articles: {chunk['articles']}")
+            st.text_area(
+                label=f"Chunk {idx + 1} Text",
+                value=chunk["text"],
+                height=150,
+                key=f"chunk_{idx + 1}"
+            )
+
 
         # ---------------------------------------------------
         # Page-wise Text
