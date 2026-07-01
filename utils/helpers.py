@@ -1,4 +1,5 @@
 import re
+from langchain_core.documents import Document
 
 def extract_main_topic(cleaned_text):
     lines = [
@@ -36,3 +37,24 @@ def extract_article_numbers(article_text):
             numbers.append(n)
 
     return sorted(numbers)
+
+def build_documents(chunks):
+    documents = []
+
+    for chunk in chunks:
+        documents.append(
+            Document(
+                page_content= chunk["text"],
+                metadata = {
+                    "chunk_id":chunk["chunk_id"],
+                    "source": chunk["source"],
+                    "document_name": chunk["document_name"],
+                    "main_topic": chunk["main_topic"],
+                    "sub_topic": chunk["sub_topic"],
+                    "articles": chunk["articles"]
+                }
+            )
+        )
+    return documents
+
+

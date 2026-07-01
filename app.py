@@ -31,6 +31,8 @@ if pdf_file is not None:
         result = clean_document(result)
 
         pages = result["pages"]
+
+        
         full_text = result["full_text"]
         page_count = result["page_count"]
 
@@ -38,11 +40,14 @@ if pdf_file is not None:
         st.success(f"Successfully uploaded: {pdf_file.name}")
         st.info(f"Total Pages: {page_count}")
 
-        final_chunks = create_chunks(full_text)
+        final_chunks = create_chunks(cleaned_text=full_text,source=pdf_file.name,document_name = pdf_file.name.replace(".pdf",""))
         st.write(f"Total Chunks Created: {len(final_chunks)}")
         st.write("### Chunks Overview")
         for idx, chunk in enumerate(final_chunks):
             st.write(f"**Chunk {idx + 1}:**")
+            st.write(f"chunk_id: {chunk['chunk_id']}")
+            st.write(f"document_name: {chunk['document_name']}")
+            st.write(f"source: {chunk['source']}")
             st.write(f"- Main Topic: {chunk['main_topic']}")
             st.write(f"- Sub Topic: {chunk['sub_topic']}")
             st.write(f"- Articles: {chunk['articles']}")

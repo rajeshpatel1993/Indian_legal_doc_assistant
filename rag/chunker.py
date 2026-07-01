@@ -2,7 +2,7 @@ import re
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from utils.helpers import extract_main_topic, extract_article_numbers
 
-def create_chunks(cleaned_text):
+def create_chunks(cleaned_text,source,document_name):
     """
     Create chunks from the cleaned text using RecursiveCharacterTextSplitter.
 
@@ -15,6 +15,7 @@ def create_chunks(cleaned_text):
 
     chunks = []
     MIN_WORD = 40
+    chunk_counter = 0
 
     #Get Main Topic
     main_topic = extract_main_topic(cleaned_text)
@@ -53,10 +54,17 @@ def create_chunks(cleaned_text):
         word_count = len(chunk_text.split())
         if word_count < MIN_WORD:
             continue  # Skip this chunk if it has fewer than MIN_WORD words
+        chunk_id = (
+            f"{document_name}"
+            f"{chunk_counter}"
+        )
 
         #Small chunk
         if len(chunk_text) < 1200:
             chunks.append({
+                "chunk_id": chunk_id,
+                "document_name": document_name,
+                "source": source,
                 "main_topic": main_topic,
                 "sub_topic": sub_topic,
                 "articles": extract_article_numbers(articles),
@@ -67,12 +75,16 @@ def create_chunks(cleaned_text):
             smaller_chunks = get_text_chunks(chunk_text)
             for idx, chunk in enumerate(smaller_chunks):
                 chunks.append({
+                    "chunk_id": chunk_id,
+                    "document_name": document_name,
+                    "source": source,
                     "main_topic": main_topic,
                     "sub_topic": sub_topic,
                     "articles": extract_article_numbers(articles),
                     "chunk_index": idx ,
                     "text": chunk
                 })
+        chunk_counter += 1
 
     return chunks
     
